@@ -1,0 +1,15 @@
+{
+    "root":"/home/edge/data_v2",
+    "train":
+    {
+        "kitti":"./data/detrac.train"
+    },
+    "test_emb":
+    {
+        "kitti":"./data/detrac.train"
+    },
+    "test":
+    {
+        "kitti":"./data/detrac.train"
+    }
+}

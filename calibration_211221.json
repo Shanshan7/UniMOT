@@ -1,0 +1,33 @@
+{
+    "paramater": {
+        "transfer_Image2Bird": [[ 5.77012380e-01, 3.01636393e+00, 1.80000000e+02],
+                                [-1.68750000e-01, 2.97687776e+00, 1.62000000e+02],
+                                [ 1.95408382e-04, 4.21644030e-03, 1.00000000e+00]],
+        "transfer_Bird2Image": [[ 3.43570502e+00, 2.40019878e+00, -2.34343239e+03],
+                                [ 4.67406587e-02, 4.41589543e+00, -9.97723560e+02],
+                                [ 1.58469095e-05, 2.47986648e-03, 1.00000000e+00]],
+        "pixel2world_distance": 0.03,
+        "time_interval": 0.05,
+        "camera_position_pixel": 1178,
+        "translation_position": 1.5
+    },
+    "Internal_paramater": {
+        "CamFocal_x": 1641.5551,
+        "CamFocal_y": 1639.578,
+        "PrincPointC_real_x": 648.04205,
+        "PrincPointC_real_y": 375.45911,
+        "DisCoef_k1": -0.30338669,
+        "DisCoef_k2": -0.90885437,
+        "DisCoef_k3": 4.4747553,
+        "DisCoef_p1": 0.0013098653,
+        "DisCoef_p2": -0.00056638342
+    },
+    "External_paramater": {
+        "pitch": -0.95470345,
+        "yaw": -1.6056581,
+        "roll": 0,
+        "CamHeight": 1468,
+        "Cam2VHDis": 1820,
+        "Cam2VMDis": -48
+    }
+}
