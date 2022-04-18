@@ -21,6 +21,7 @@ class DetResult():
         self.confidence = 0.0
         self.head_location = []
         self.pedestrian_location = []
+        self.object_location = []
 
 
 class DetResultInfo(DataInfo):
