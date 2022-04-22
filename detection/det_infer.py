@@ -154,7 +154,7 @@ if __name__ == '__main__':
                                      augment=False, agnostic_nms=False)
     elif args.detect_method == "nanoDet":
         detect_infer.set_model_param(config_path="./detection/nanodet/config/nanodet-plus-m_416.yml",
-                                     model_path="./detection/nanodet/workspace/nanodet-plus-m_416/model_best/nanodet_model_best.pth")
+                                     model_path="./nanodet_model_best.pth")
     else:
         print("Wrong detect method!!!")
 

@@ -50,6 +50,7 @@ class OneStageDetector(nn.Module):
             torch.cuda.synchronize()
             time1 = time.time()
             preds = self(meta["img"])
+            print("nanodet inference: ", preds.shape)
             torch.cuda.synchronize()
             time2 = time.time()
             print("forward time: {:.3f}s".format((time2 - time1)), end=" | ")
