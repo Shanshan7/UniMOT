@@ -5,6 +5,7 @@ or
 ```
 pip install motmetrics
 ```
+
 ## Data preparation
 1. Need to prepare benchmark data 'gt.txt' and verification data 'result.txt' for each seq  
 2. And prepare the data in the following structure:
