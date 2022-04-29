@@ -5,8 +5,21 @@ or
 ```
 pip install motmetrics
 ```
-## 2.Run  
-Modify the path in run_metrics.py according to gt.txt and result.txt, and run run_metrics.py to get the result:
+
+## Data preparation
+1. Need to prepare benchmark data 'gt.txt' and verification data 'result.txt' for each seq  
+2. And prepare the data in the following structure:
 ```
-python run_metrics.py
+seqs
+   |——————seq1
+   |        └——————gt.txt
+   |        └——————result.txt
+   └——————seq2
+   └——————......
+```
+## 2.Run  
+1. Modify ground_truth_path, result_path and summary_path in eval.sh according to your own path of eval  
+2. run eval.sh to get the result:
+```
+sh eval.sh
 ```
