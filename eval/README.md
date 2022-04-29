@@ -9,7 +9,7 @@ pip install motmetrics
 1. Need to prepare benchmark data 'gt.txt' and verification data 'result.txt' for each seq  
 2. And prepare the data in the following structure:
 ```
-eval
+seqs
    |——————seq1
    |        └——————gt.txt
    |        └——————result.txt
@@ -17,9 +17,8 @@ eval
    └——————......
 ```
 ## 2.Run  
-1. Modify ground_truth_dir(line 56) and hypothesis_dir(line 57) in run_metrics.py according to your own path of eval  
-2. Modify xlsx_dir(line 78)  in run_metrics.py
-3. run run_metrics.py to get the result:
+1. Modify ground_truth_path, result_path and summary_path in eval.sh according to your own path of eval  
+2. run eval.sh to get the result:
 ```
-python run_metrics.py
+sh eval.sh
 ```
