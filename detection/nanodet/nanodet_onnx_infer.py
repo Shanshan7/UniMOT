@@ -5,9 +5,11 @@ import onnxruntime
 import matplotlib.pyplot as plt
 import cv2
 
-from detection.yolov5.utils.augmentations import letterbox
-from detection.yolov5.utils.general import non_max_suppression, scale_coords
-from detection.post_process.yolov5_post_process import YoloV5PostProcess
+from detection.post_process.nanodet_post_process import NanoDetPostProcess
+from detection.nanodet.nanodet.util import cfg, load_config
+from detection.nanodet.nanodet.data.transform import Pipeline
+from detection.nanodet.nanodet.data.batch_process import stack_batch_img
+from detection.nanodet.nanodet.data.collate import naive_collate
 import torch
 
 
@@ -46,32 +48,38 @@ def parse_arguments():
 
 class OnnxInference():
 
-    def __init__(self, onnx_path):
+    def __init__(self, onnx_path, config_path = "./detection/nanodet/config/nanodet-plus-m_416.yml"):
         self.onnx_path = onnx_path
         self.session = onnxruntime.InferenceSession(self.onnx_path, None)
         self.input_name = self.session.get_inputs()[0].name
         self.input_shape = self.session.get_inputs()[0].shape
         self.output_name = self.session.get_outputs()[0].name
 
-        self.yolov5_post_process = YoloV5PostProcess()
+        load_config(cfg, config_path)
+        self.cfg = cfg
+        self.pipeline = Pipeline(self.cfg.data.val.pipeline, self.cfg.data.val.keep_ratio)
+        self.nanodet_post_process = NanoDetPostProcess()
 
     def infer(self, data_path):
         input_data = cv2.imread(data_path)
         image = input_data.copy()
         data = self.preprocess(input_data)
         raw_result = torch.tensor(self.session.run([self.output_name], {self.input_name: data}))
-        result = self.yolov5_post_process(raw_result, data, image)
+        print(raw_result.shape)
+        result = self.nanodet_post_process(raw_result, data, image)
         self.show_result(result, image)
 
     def preprocess(self, input_data):
-        # Padded resize
-        input_data = letterbox(input_data, self.input_shape[2:], stride=32, auto=False)[0]
-        input_data = input_data.transpose((2, 0, 1))[::-1]  # HWC to CHW, BGR to RGB
-        input_data = np.ascontiguousarray(input_data)
-        result = np.array(input_data).astype('float32')
-        result = result / 255.0  # 0 - 255 to 0.0 - 1.0
-        result = np.expand_dims(result, axis=0)
-        return result
+        img_info = {"id": 0}
+        height, width = input_data.shape[:2]
+        img_info["height"] = height
+        img_info["width"] = width
+        meta = dict(img_info=img_info, raw_img=input_data, img=input_data)
+        meta = self.pipeline(None, meta, self.cfg.data.val.input_size)
+        meta["img"] = torch.from_numpy(meta["img"].transpose(2, 0, 1))
+        meta = naive_collate([meta])
+        meta["img"] = stack_batch_img(meta["img"], divisible=32)
+        return meta["img"].numpy()
 
     def show_result(self, result, image):
         for det_result in result:

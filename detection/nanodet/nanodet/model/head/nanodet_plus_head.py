@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from nanodet.util import bbox2distance, distance2bbox, multi_apply, overlay_bbox_cv
+from detection.nanodet.nanodet.util import bbox2distance, distance2bbox, multi_apply, overlay_bbox_cv
 
 from ...data.transform.warp import warp_boxes
 from ..loss.gfocal_loss import DistributionFocalLoss, QualityFocalLoss
@@ -368,6 +368,7 @@ class NanoDetPlusHead(nn.Module):
             preds (Tensor): Prediction output.
             meta (dict): Meta info.
         """
+        print(self.num_classes, self.reg_max)
         cls_scores, bbox_preds = preds.split(
             [self.num_classes, 4 * (self.reg_max + 1)], dim=-1
         )
@@ -404,6 +405,7 @@ class NanoDetPlusHead(nn.Module):
                 det_bboxes[:, :4], np.linalg.inv(warp_matrix), img_width, img_height
             )
             classes = det_labels.detach().cpu().numpy()
+            print(det_bboxes.shape)
             for i in range(self.num_classes):
                 inds = classes == i
                 det_result[i] = np.concatenate(
@@ -437,6 +439,7 @@ class NanoDetPlusHead(nn.Module):
         device = cls_preds.device
         b = cls_preds.shape[0]
         input_height, input_width = img_metas["img"].shape[2:]
+        print(input_width, input_height)
         input_shape = (input_height, input_width)
 
         featmap_sizes = [

@@ -77,7 +77,7 @@ def run(weights=ROOT / 'yolov5s.pt',  # model.pt path(s)
     classify, suffix, suffixes = False, Path(w).suffix.lower(), ['.pt', '.onnx', '.tflite', '.pb', '']
     check_suffix(w, suffixes)  # check weights have acceptable suffix
     pt, onnx, tflite, pb, saved_model = (suffix == x for x in suffixes)  # backend booleans
-    stride, names = 64, [f'class{i}' for i in range(1000)]  # assign defaults
+    stride, names = 32, [f'class{i}' for i in range(1000)]  # assign defaults
     if pt:
         model = torch.jit.load(w) if 'torchscript' in w else attempt_load(weights, map_location=device)
         stride = int(model.stride.max())  # model stride
