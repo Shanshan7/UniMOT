@@ -1,5 +1,9 @@
 # use motmetrics
 ## 1.Set up  
+Install some dependencies:
+```
+pip install lap openpyxl
+```
 Install py-motmetrics. Follow the instructions here: https://github.com/cheind/py-motmetrics  
 or  
 ```
@@ -22,4 +26,8 @@ seqs
 2. run eval.sh to get the result:
 ```
 sh eval.sh
+```
+or give paramaters to run eval.py
+```
+python3 eval/eval.py --sp video seqences floder -s summary excel path
 ```

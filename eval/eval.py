@@ -9,51 +9,48 @@ def parse_arguments():
     parser = OptionParser()
     parser.description = "This program is MOT EVAL"
 
-    parser.add_option("-r", "--result", dest="result_path",
+    parser.add_option("--sp", "--seqs", dest="sequence_path",
                       metavar="PATH", type="string", default=None,
-                      help="detetion path")#修改成自己的结果文件路径
+                      help="sequence path")#修改成自己的结果文件路径
 
-    parser.add_option("-g", "--gt", dest="ground_truth_path",
-                      metavar="PATH", type="string", default=None,
-                      help="ground truth path")#修改成自己的gt文件路径
+    # parser.add_option("-g", "--gt", dest="ground_truth_path",
+    #                   metavar="PATH", type="string", default=None,
+    #                   help="ground truth path")#修改成自己的gt文件路径
 
     parser.add_option("-s", "--summary", dest="summary_path",
-                      metavar="PATH", type="string", default=None,
+                      metavar="PATH", type="string", default="./",
                       help="summary path")#修改成希望的结果保存路径
 
     (options, args) = parser.parse_args()
 
-    if options.result_path:
-        if not os.path.exists(options.result_path):
-            parser.error("Could not find the result path")
+    if options.sequence_path:
+        if not os.path.exists(options.sequence_path):
+            parser.error("Could not find the sequence path")
         else:
-            options.result_path = os.path.normpath(options.result_path)
+            options.sequence_path = os.path.normpath(options.sequence_path)
     else:
-        parser.error("'result' option is required to run this program")
+        parser.error("'sequence_path' option is required to run this program")
 
-    if options.ground_truth_path:
-        if not os.path.exists(options.ground_truth_path):
-            parser.error("Could not find the ground truth path")
-        else:
-            options.ground_truth_path = os.path.normpath(options.ground_truth_path)
-    else:
-        parser.error("'gt' option is required to run this program")
-
-    if options.summary_path:
-        if not os.path.exists(options.summary_path):
-            parser.error("Could not find the summary path")
-        else:
-            options.summary_path = os.path.normpath(options.summary_path)
-    else:
-        parser.error("'summary' option is required to run this program")
+    # if options.summary_path:
+    #     if not os.path.exists(options.summary_path):
+    #         parser.error("Could not find the summary path")
+    #     else:
+    #         options.summary_path = os.path.normpath(options.summary_path)
+    # else:
+    #     parser.error("'summary' option is required to run this program")
 
     return options
 
-def load_sequence_information(sequences, ground_truth_dir, hypothesis_dir):
+def sequence_filter(sequences):
+    for sequence in sequences[::-1]:
+        if not os.path.isdir(os.path.join(sequence_dir, sequence)):
+            sequences.remove(sequence)
+
+def load_sequence_information(sequences, sequence_dir):
     result = []
     for sequence in sequences:
-        ground_truth = os.path.join(ground_truth_dir, sequence, 'gt.txt')
-        hypothesis = os.path.join(hypothesis_dir, sequence, 'result.txt')
+        ground_truth = os.path.join(sequence_dir, sequence, 'gt.txt')
+        hypothesis = os.path.join(sequence_dir, sequence, 'result.txt')
         gt = pd.read_csv(ground_truth, header=None, sep=',')
         gt = filter_out_small_bbox(gt)
         hp = pd.read_csv(hypothesis, header=None, sep=",")
@@ -95,14 +92,13 @@ def filter_out_small_bbox(df):
     return result_df
 
 
-
 if __name__ == '__main__':
     print("process start...")
     options = parse_arguments()
-    ground_truth_dir =  options.ground_truth_path
-    hypothesis_dir = options.result_path
-    sequence = os.listdir(hypothesis_dir)
-    accs = load_sequence_information(sequence, ground_truth_dir, hypothesis_dir)
+    sequence_dir = options.sequence_path
+    sequence = os.listdir(sequence_dir)
+    sequence_filter(sequence)
+    accs = load_sequence_information(sequence, sequence_dir)
 
     mh = mm.metrics.create()
     summary = mh.compute(accs[0], metrics=['num_frames', 'mota', 'motp'], name='acc')
