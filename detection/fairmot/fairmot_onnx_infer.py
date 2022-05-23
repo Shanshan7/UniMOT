@@ -57,7 +57,7 @@ class FairtMOTInference():
         input_data = cv2.imread(data_path)
         image = input_data.copy()
         data = self.preprocess(input_data)
-        raw_result = self.session.run(["hm", "id", "reg", "wh"], {self.input_name: data})
+        raw_result = self.session.run(["hm", "id", "reg", "wh"], {self.input_name: data})#"hm", "id", "reg", "wh"
         result = self.fairmot_post_process(raw_result, image.shape)
         self.show_result(result, image)
 
