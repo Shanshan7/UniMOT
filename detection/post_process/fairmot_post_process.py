@@ -18,7 +18,7 @@ class FairMOTPostProcess():
         self.detect2d_class = detect2d_class
         self.class_number = len(detect2d_class)
         self.threshold = threshold
-        self.K = 500
+        self.K = 3
         self.ltrb = True
         self.down_ratio = 4
         # EasyLogger.debug("det2d class name:{}".format(self.detect2d_class))
@@ -29,12 +29,21 @@ class FairMOTPostProcess():
     def __call__(self, output_list, src_size):
         result = []
         assert len(output_list) == 4
+        '''
+        c = np.array([src_size[0] / 2., src_size[1] / 2.], dtype=np.float32)
+        s = max(float(self.image_size[0]) / float(self.image_size[0]) * src_size[1], src_size[0]) * 1.0
+        meta = {'c': c, 's': s,
+                'out_height': self.image_size[1] // self.down_ratio,
+                'out_width': self.image_size[0] // self.down_ratio}
+        '''
+        #print(output_list)
         c = np.array([src_size[0] / 2., src_size[1] / 2.], dtype=np.float32)
         s = max(float(self.image_size[0]) / float(self.image_size[0]) * src_size[1], src_size[0]) * 1.0
         meta = {'c': c, 's': s,
                 'out_height': self.image_size[1] // self.down_ratio,
                 'out_width': self.image_size[0] // self.down_ratio}
         hm = torch.tensor(output_list[0]).sigmoid_()
+        #print(output_list)
         id_feature = torch.tensor(output_list[1])
         id_feature = F.normalize(id_feature, dim=1)
         reg = torch.tensor(output_list[2])
@@ -63,8 +72,8 @@ class FairMOTPostProcess():
             det_result.head_location = []
             det_result.object_location = det[0:4]
             result.append(det_result)
-            # temp.name = self.detect2d_class[0]
-            # temp.reid = id_feature[index]
+            #temp.name = self.detect2d_class[0]
+            #temp.reid = id_feature[index]
         return result
 
     def mot_decode(self, heat, wh, reg=None, ltrb=False, K=100):

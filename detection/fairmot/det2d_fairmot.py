@@ -17,7 +17,7 @@ class Det2dFairMOT():
         self.model_args = {"type": model_name[0],
                            "data_channel": 3,
                            "class_number": 1,
-                           "reid": 64}
+                           "reid": 64}#64
         self.model_process = TorchModelProcess()
         self.model = self.model_process.create_model(self.model_args, gpu_id)
         self.model_process.load_latest_model(weights_path[0], self.model)

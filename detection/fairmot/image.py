@@ -11,7 +11,9 @@ from __future__ import print_function
 
 import numpy as np
 import cv2
-import random
+import random 
+from matplotlib import pyplot as plt
+import paddleseg.transforms as T
 
 def flip(img):
   return img[:, :, ::-1].copy()  
@@ -230,9 +232,16 @@ def color_aug(data_rng, image, eig_val, eig_vec):
     lighting_(data_rng, image, 0.1, eig_val, eig_vec)
 
 
-def letterbox(img, height=1088, width=608,
-              color=(127.5, 127.5, 127.5)):  # resize a rectangular image to a padded rectangular
+def letterbox(img, height=1920, width=1088,
+              color=(127.5, 127.5, 127.5)):  # resize a rectangular image to a padded rectangular127.5
     shape = img.shape[:2]  # shape = [height, width]
+    '''
+    transforms = [
+        T.Resize(target_size=(608, 1088)), 
+        T.Normalize(mean=(0,0,0), std=(1,1,1))
+    ]
+    img, _ = T.Compose(transforms)(img)
+    '''
     ratio = min(float(height) / shape[0], float(width) / shape[1])
     new_shape = (round(shape[1] * ratio), round(shape[0] * ratio))  # new_shape = [width, height]
     dw = (width - new_shape[0]) / 2  # width padding
@@ -241,4 +250,6 @@ def letterbox(img, height=1088, width=608,
     left, right = round(dw - 0.1), round(dw + 0.1)
     img = cv2.resize(img, new_shape, interpolation=cv2.INTER_AREA)  # resized, no border
     img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color)  # padded rectangular
+    plt.imshow(img)
+    plt.show()
     return img, ratio, dw, dh
